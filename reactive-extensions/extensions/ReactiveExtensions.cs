@@ -825,5 +825,137 @@ namespace akarnokd.reactive_extensions
 
             return new IntervalRange(start, start + count, initialDelay, period, scheduler);
         }
+
+        /// <summary>
+        /// Orders the source by means of the given element selector ascendingly.
+        /// </summary>
+        /// <typeparam name="T">The element type of the source and result observables.</typeparam>
+        /// <typeparam name="K">The type of the selected sorting criterion.</typeparam>
+        /// <param name="source">The observable to sort.</param>
+        /// <param name="selector">The selector to select the sorting criterion.</param>
+        /// <returns>The new observable instance.</returns>
+        public static IOrderedObservable<T> OrderBy<T, K>(this IObservable<T> source, Func<T, K> selector)
+        {
+            RequireNonNull(source, nameof(source));
+            RequireNonNull(selector, nameof(selector));
+
+            return new OrderedObservable<T>(source, new AsscendingComparer<T,K>(selector));
+        }
+
+        /// <summary>
+        /// Orders the source by means of the given element selector and comparer ascendingly.
+        /// </summary>
+        /// <typeparam name="T">The element type of the source and result observables.</typeparam>
+        /// <typeparam name="K">The type of the selected sorting criterion.</typeparam>
+        /// <param name="source">The observable to sort.</param>
+        /// <param name="selector">The selector to select the sorting criterion.</param>
+        /// <param name="comparer">The comparer to compare the sorting criterion.</param>
+        /// <returns>The new observable instance.</returns>
+        public static IOrderedObservable<T> OrderBy<T, K>(this IObservable<T> source, Func<T, K> selector, IComparer<K> comparer)
+        {
+            RequireNonNull(source, nameof(source));
+            RequireNonNull(selector, nameof(selector));
+
+            return new OrderedObservable<T>(source, new AsscendingComparer<T, K>(selector, comparer));
+        }
+
+        /// <summary>
+        /// Orders the source by means of the given element selector descendingly.
+        /// </summary>
+        /// <typeparam name="T">The element type of the source and result observables.</typeparam>
+        /// <typeparam name="K">The type of the selected sorting criterion.</typeparam>
+        /// <param name="source">The observable to sort.</param>
+        /// <param name="selector">The selector to select the sorting criterion.</param>
+        /// <returns>The new observable instance.</returns>
+        public static IOrderedObservable<T> OrderByDescending<T, K>(this IObservable<T> source, Func<T, K> selector)
+        {
+            RequireNonNull(source, nameof(source));
+            RequireNonNull(selector, nameof(selector));
+
+            return new OrderedObservable<T>(source, new DescendingComparer<T, K>(selector));
+        }
+
+        /// <summary>
+        /// Orders the source by means of the given element selector and comparer descendingly.
+        /// </summary>
+        /// <typeparam name="T">The element type of the source and result observables.</typeparam>
+        /// <typeparam name="K">The type of the selected sorting criterion.</typeparam>
+        /// <param name="source">The observable to sort.</param>
+        /// <param name="selector">The selector to select the sorting criterion.</param>
+        /// <param name="comparer">The comparer to compare the sorting criterion.</param>
+        /// <returns>The new observable instance.</returns>
+        public static IOrderedObservable<T> OrderByDescending<T, K>(this IObservable<T> source, Func<T, K> selector, IComparer<K> comparer)
+        {
+            RequireNonNull(source, nameof(source));
+            RequireNonNull(selector, nameof(selector));
+
+            return new OrderedObservable<T>(source, new DescendingComparer<T, K>(selector, comparer));
+        }
+
+        /// <summary>
+        /// Orders the ordered observable by a further sorting criterion ascendingly.
+        /// </summary>
+        /// <typeparam name="T">The element type of the source and result observables.</typeparam>
+        /// <typeparam name="K">The type of the selected sorting criterion.</typeparam>
+        /// <param name="source">The observable to sort.</param>
+        /// <param name="selector">The selector to select the sorting criterion.</param>
+        /// <returns>The new observable instance.</returns>
+        public static IOrderedObservable<T> ThenBy<T, K>(this IOrderedObservable<T> source, Func<T, K> selector)
+        {
+            RequireNonNull(source, nameof(source));
+            RequireNonNull(selector, nameof(selector));
+
+            return source.CreateOrderedObservable(selector, null, false);
+        }
+
+        /// <summary>
+        /// Orders the ordered observable by a further sorting criterion ascendingly.
+        /// </summary>
+        /// <typeparam name="T">The element type of the source and result observables.</typeparam>
+        /// <typeparam name="K">The type of the selected sorting criterion.</typeparam>
+        /// <param name="source">The observable to sort.</param>
+        /// <param name="selector">The selector to select the sorting criterion.</param>
+        /// <param name="comparer">The comparer to compare the sorting criterion.</param>
+        /// <returns>The new observable instance.</returns>
+        public static IOrderedObservable<T> ThenBy<T, K>(this IOrderedObservable<T> source, Func<T, K> selector, IComparer<K> comparer)
+        {
+            RequireNonNull(source, nameof(source));
+            RequireNonNull(selector, nameof(selector));
+
+            return source.CreateOrderedObservable(selector, comparer, false);
+        }
+
+        /// <summary>
+        /// Orders the ordered observable by a further sorting criterion descendingly.
+        /// </summary>
+        /// <typeparam name="T">The element type of the source and result observables.</typeparam>
+        /// <typeparam name="K">The type of the selected sorting criterion.</typeparam>
+        /// <param name="source">The observable to sort.</param>
+        /// <param name="selector">The selector to select the sorting criterion.</param>
+        /// <returns>The new observable instance.</returns>
+        public static IOrderedObservable<T> ThenByDescending<T, K>(this IOrderedObservable<T> source, Func<T, K> selector)
+        {
+            RequireNonNull(source, nameof(source));
+            RequireNonNull(selector, nameof(selector));
+
+            return source.CreateOrderedObservable(selector, null, true);
+        }
+
+        /// <summary>
+        /// Orders the ordered observable by a further sorting criterion descendingly.
+        /// </summary>
+        /// <typeparam name="T">The element type of the source and result observables.</typeparam>
+        /// <typeparam name="K">The type of the selected sorting criterion.</typeparam>
+        /// <param name="source">The observable to sort.</param>
+        /// <param name="selector">The selector to select the sorting criterion.</param>
+        /// <param name="comparer">The comparer to compare the sorting criterion.</param>
+        /// <returns>The new observable instance.</returns>
+        public static IOrderedObservable<T> ThenByDescending<T, K>(this IOrderedObservable<T> source, Func<T, K> selector, IComparer<K> comparer)
+        {
+            RequireNonNull(source, nameof(source));
+            RequireNonNull(selector, nameof(selector));
+
+            return source.CreateOrderedObservable(selector, comparer, true);
+        }
     }
 }
